@@ -7,7 +7,6 @@ docker build -t teabot .
 ```
 
 ## Run
-Containerized/Docker:
 ```
-docker run -it --rm --name teabot teabot
+docker run -it --rm teabot
 ```
