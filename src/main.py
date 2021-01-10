@@ -1,7 +1,9 @@
 import json
 import logging
 import logging.config
+import logging.handlers
 import os
+import queue
 import sys
 
 from clients.discord_client import DiscordClient
@@ -16,6 +18,24 @@ def main(argv):
         'token': ''
     }
 
+    logger = logging.getLogger(__name__)
+    logger.setLevel(logging.DEBUG)
+    logFormatter = logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s')
+
+    consoleLogHandler = logging.StreamHandler()
+    consoleLogHandler.setFormatter(logFormatter)
+    consoleLogHandler.setLevel(logging.WARNING)
+
+    fileLogHandler = logging.handlers.RotatingFileHandler('teabot.log', maxBytes = 50000, backupCount = 5)
+    fileLogHandler.setFormatter(logFormatter)
+    fileLogHandler.setLevel(logging.INFO)
+
+    logQueue = queue.Queue(-1) # no limit on size
+    queueHandler = logging.handlers.QueueHandler(logQueue)
+    logger.addHandler(queueHandler)
+    queueListener = logging.handlers.QueueListener(logQueue, consoleLogHandler, fileLogHandler, respect_handler_level = True)
+    queueListener.start()
+
     with open(configFilePath) as configFile:
         configurationJSON = json.load(configFile)
         if 'token' in configurationJSON:
@@ -23,7 +43,8 @@ def main(argv):
     
     client = DiscordClient()
     client.run(configuration['token'])
+    queueListener.stop()
 
 
 if __name__ == "__main__":
-    main(sys.argv)
+    sys.exit(main(sys.argv))
