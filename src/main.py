@@ -1,4 +1,6 @@
 import json
+import logging
+import logging.config
 import os
 import sys
 
@@ -7,7 +9,7 @@ from clients.discord_client import DiscordClient
 
 def main(argv):
     if len(argv) < 2:
-        sys.exit('Usage: %s <token>' % argv[0])
+        sys.exit('Usage: %s <configuration.json>' % argv[0])
 
     configFilePath = argv[1]
     configuration = {
