@@ -6,7 +6,7 @@ import os
 import queue
 import sys
 
-from clients.discord_client import DiscordClient
+from clients.discord.discord_client import DiscordClient
 
 
 def main(argv):
@@ -18,6 +18,7 @@ def main(argv):
         'token': ''
     }
 
+    # TODO: load logging via configuration
     logger = logging.getLogger(__name__)
     logger.setLevel(logging.DEBUG)
     logFormatter = logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s')
